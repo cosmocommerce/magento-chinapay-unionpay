@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<!-- 
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category    CosmoCommerce
+ * @package     CosmoCommerce_Unionpay
+ * @copyright   Copyright (c) 2009-2013 CosmoCommerce,LLC. (http://www.cosmocommerce.com)
+ * @contact :
+ * T: +86-021-66346672
+ * L: Shanghai,China
+ * M:sales@cosmocommerce.com
+ */
+-->
+<config>
+    <modules>
+        <CosmoCommerce_Unionpay>
+            <version>0.1.0</version>
+        </CosmoCommerce_Unionpay>
+    </modules>
+    <global>
+        <models>
+            <unionpay>
+                <class>CosmoCommerce_Unionpay_Model</class>
+                <resourceModel>unionpay_mysql4</resourceModel>
+            </unionpay>
+            <unionpay_mysql4>
+                <class>CosmoCommerce_Unionpay_Model_Mysql4</class>
+                <entities>
+                    <api_debug><table>unionpay_api_debug</table></api_debug>
+                </entities>
+            </unionpay_mysql4>
+        </models>
+        <resources>
+            <unionpay_setup>
+                <setup>
+                    <module>CosmoCommerce_Unionpay</module>
+                    <class>CosmoCommerce_Unionpay_Model_Mysql4_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </unionpay_setup>
+            <unionpay_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </unionpay_write>
+            <unionpay_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </unionpay_read>
+        </resources>
+        <blocks>
+            <unionpay><class>CosmoCommerce_Unionpay_Block</class></unionpay>
+    	</blocks>
+        <payment>
+            <unionpay_payment>
+                <languages>
+                    <FR>
+                        <code>FR</code>
+                        <name>Français</name>
+                    </FR>
+                    <EN>
+                        <code>EN</code>
+                        <name>Anglais</name>
+                    </EN>
+                    <ES>
+                        <code>ES</code>
+                        <name>Espagnol</name>
+                    </ES>
+                    <DE>
+                        <code>DE</code>
+                        <name>Allemand</name>
+                    </DE>
+                    <IT>
+                        <code>IT</code>
+                        <name>Italien</name>
+                    </IT>
+                    <NL>
+                        <code>NL</code>
+                        <name>Néerlandais</name>
+                    </NL>
+                </languages>
+            </unionpay_payment>
+        </payment>
+		  <helpers>
+		  	   <unionpay>
+		  	   	   <class>CosmoCommerce_Unionpay_Helper</class>
+		  	   </unionpay>
+		  </helpers>
+    </global>
+    <frontend>
+        <secure_url>
+            <unionpay_payment>/unionpay/payment</unionpay_payment>
+        </secure_url>
+        <routers>
+            <unionpay>
+                <use>standard</use>
+                <args>
+                    <module>CosmoCommerce_Unionpay</module>
+                    <frontName>unionpay</frontName>
+                </args>
+            </unionpay>
+        </routers>
+        <translate>
+            <modules>
+                <CosmoCommerce_Unionpay>
+                    <files>
+                        <default>CosmoCommerce_Unionpay.csv</default>
+                    </files>
+                </CosmoCommerce_Unionpay>
+            </modules>
+        </translate>
+        <layout>
+            <updates>
+                <unionpay>
+                    <file>unionpay.xml</file>
+                </unionpay>
+            </updates>
+        </layout>
+    </frontend>
+    <adminhtml>
+        <translate>
+            <modules>
+                <CosmoCommerce_Unionpay>
+                    <files>
+                        <default>CosmoCommerce_Unionpay.csv</default>
+                    </files>
+                </CosmoCommerce_Unionpay>
+            </modules>
+        </translate>
+    </adminhtml>
+    <default>
+        <payment>
+            <unionpay_payment>
+                  <model>unionpay/payment</model>
+                  <title>Unionpay</title>
+                  <allowspecific>0</allowspecific>
+                  <transaction_type>O</transaction_type>
+            </unionpay_payment>
+        </payment>
+    </default>
+</config>

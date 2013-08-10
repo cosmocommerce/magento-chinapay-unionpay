@@ -1,0 +1,4 @@
+code                                   app/code/community/CosmoCommerce/Unionpay
+frontend/template      app/design/frontend/base/default/template/unionpay
+locale      app/locale
+CosmoCommerce_Unionpay.xml                          app/etc/modules/CosmoCommerce_Unionpay.xml
