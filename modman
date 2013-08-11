@@ -1,4 +1,5 @@
 code                                   app/code/community/CosmoCommerce/Unionpay
 frontend/template      app/design/frontend/base/default/template/unionpay
-locale      app/locale
+locale/zh_CN/CosmoCommerce_Unionpay.csv      app/locale/zh_CN/CosmoCommerce_Unionpay.csv
+locale/en_US/CosmoCommerce_Unionpay.csv      app/locale/en_US/CosmoCommerce_Unionpay.csv
 CosmoCommerce_Unionpay.xml                          app/etc/modules/CosmoCommerce_Unionpay.xml

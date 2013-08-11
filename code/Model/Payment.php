@@ -24,7 +24,7 @@ class CosmoCommerce_Unionpay_Model_Payment extends Mage_Payment_Model_Method_Abs
 {
     protected $_code  = 'unionpay_payment';
     protected $_formBlockType = 'unionpay/form';
-	protected $_gateway="https://payment.chinapay.com/pay/TransGet?";
+	protected $_gateway="https://payment.chinapay.com/pay/TransGet";
 
     // Unionpay return codes of payment
     const RETURN_CODE_ACCEPTED      = 'Success';
@@ -164,8 +164,6 @@ class CosmoCommerce_Unionpay_Model_Payment extends Mage_Payment_Model_Method_Abs
 		if(!$merid) {
 			echo "导入私钥文件失败！";
 			exit;
-		}else{
-			echo $merid;
 		}
 			
 		$site_url ="http://www.baidu.com";
@@ -181,31 +179,13 @@ class CosmoCommerce_Unionpay_Model_Payment extends Mage_Payment_Model_Method_Abs
 		$priv1 = "";    
 		$chkvalue = $this->signOrder($merid,$ordid,$transamt,$curyid,$transdate,$transtype);
 		
+		
 		if (!$chkvalue) {
 			echo "签名失败！";
 			exit;
-		}else{
-			echo "签名1";
 		}
 		
-		
-		
-		
-<input type="text" name="MerId" value="<?php echo $merid; ?>" readonly /><br/>
-<input type="text" name="OrdId" value="<?php echo $ordid; ?>" readonly/><br/>
-<input type="text" name="TransAmt" value="<?php echo $transamt; ?>" readonly/><br/>
-<input type="text" name="CuryId" value="<?php echo $curyid; ?>" readonly/><br/>
-<input type="text" name="TransDate" value="<?php echo $transdate; ?>" readonly/><br/>
-<input type="text" name="TransType" value="<?php echo $transtype; ?>" readonly/><br/>
-<input type="text" name="Version" value="<?php echo $version; ?>" readonly/><br/>
-<input type="text" name="BgRetUrl" value="<?php echo $bgreturl; ?>"/><br/>
-<input type="text" name="PageRetUrl" value="<?php echo $pagereturl; ?>"/><br/>
-<input type="text" name="GateId" value="<?php echo $gateid; ?>"/><br/>
-<input type="text" name="Priv1" value="<?php echo $priv1; ?>" readonly/><br/>
-<input type="text" name="ChkValue" value="<?php echo $chkvalue; ?>" readonly/><br/>
-		
-		
-		$parameter = array('MerId'           => $this->getConfigData('partner_id'),
+		$parameter = array('MerId'           => $merid,
 						   'OrdId'           => $ordid,
 						   'TransAmt'        => $transamt,
 						   'CuryId'        => $curyid,
@@ -218,9 +198,13 @@ class CosmoCommerce_Unionpay_Model_Payment extends Mage_Payment_Model_Method_Abs
 						   'Priv1'      => $priv1,
 						   'ChkValue'      => $chkvalue
 						);
-		print_r($parameter);
-		exit();
-        return $fields;
+		/*
+		foreach($parameter as $d){
+			echo $d;
+			echo "<br />";
+		}
+		*/
+        return $parameter;
     }
     
 	
@@ -271,28 +255,7 @@ class CosmoCommerce_Unionpay_Model_Payment extends Mage_Payment_Model_Method_Abs
 		// By default we use language selected in store admin
 		return $this->getConfigData('language');
 	}
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
+ 
 
 	public function hex2binphp($hexdata)
 	{
@@ -468,6 +431,9 @@ class CosmoCommerce_Unionpay_Model_Payment extends Mage_Payment_Model_Method_Abs
 		$coefficient = substr($bin, 640, 64);
 		$enc = mcrypt_cbc($cipher, 'SCUBEPGW', $coefficient, MCRYPT_DECRYPT, $iv);
 		$private_key["coefficient"] = $enc;
+		
+		
+		$this->private_key=$private_key;
 		return $ret;
 	}
 
@@ -478,6 +444,7 @@ class CosmoCommerce_Unionpay_Model_Payment extends Mage_Payment_Model_Method_Abs
 			return false;
 		}
 		$hb = $this->sha1_128($msg);
+		
 		return $this->rsa_encrypt($private_key, $hb);
 	}
 
@@ -490,6 +457,8 @@ class CosmoCommerce_Unionpay_Model_Payment extends Mage_Payment_Model_Method_Abs
 		if (strlen($transdate) != 8) return false;
 		if (strlen($transtype) != 4) return false;
 		$plain = $merid . $ordno . $amount . $curyid . $transdate . $transtype;
+		
+		
 		return $this->sign($plain);
 	}
 
@@ -530,8 +499,9 @@ class CosmoCommerce_Unionpay_Model_Payment extends Mage_Payment_Model_Method_Abs
 	public function magento2chinapaysn($order_sn, $vid){
 		if($order_sn && $vid){
 			$sub_vid = substr($vid, 10, 5);
-			$sub_start = substr($order_sn, 0, 4);
-			$sub_end = substr($order_sn, 4);
+			$sub_start = substr($order_sn, 0, 2);
+			$sub_start=str_pad($sub_start, 4, "0", STR_PAD_LEFT);
+			$sub_end = substr($order_sn, 2);
 			return $sub_start . $sub_vid . $sub_end;
 		}
 	}
@@ -561,5 +531,24 @@ class CosmoCommerce_Unionpay_Model_Payment extends Mage_Payment_Model_Method_Abs
 			return $temp;
 		}
 	}
+ 
+	
+	public function arg_sort($array) {
+		ksort($array);
+		reset($array);
+		return $array;
+	}
 
+	public function charset_encode($input,$_output_charset ,$_input_charset ="GBK" ) {
+		$output = "";
+		if($_input_charset == $_output_charset || $input ==null) {
+			$output = $input;
+		} elseif (function_exists("mb_convert_encoding")){
+			$output = mb_convert_encoding($input,$_output_charset,$_input_charset);
+		} elseif(function_exists("iconv")) {
+			$output = iconv($_input_charset,$_output_charset,$input);
+		} else die("sorry, you have no libs support for charset change.");
+		return $output;
+	}
+   
 }

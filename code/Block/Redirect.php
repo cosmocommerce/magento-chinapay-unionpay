@@ -27,10 +27,11 @@ class CosmoCommerce_Unionpay_Block_Redirect extends Mage_Core_Block_Abstract
 	{
 		$standard = Mage::getModel('unionpay/payment');
         $form = new Varien_Data_Form();
-        $form->setAction($standard->getAlipayUrl())
+        $form->setAction($standard->getUnionpayUrl())
             ->setId('unionpay_payment_checkout')
             ->setName('unionpay_payment_checkout')
-            ->setMethod('GET')
+            ->setTarget('_blank')
+            ->setMethod('POST')
             ->setUseContainer(true);
         foreach ($standard->setOrder($this->getOrder())->getStandardCheckoutFormFields() as $field => $value) {
             $form->addField($field, 'hidden', array('name' => $field, 'value' => $value));
@@ -43,7 +44,6 @@ class CosmoCommerce_Unionpay_Block_Redirect extends Mage_Core_Block_Abstract
         $html.= $formHTML;
         $html.= '<script type="text/javascript">document.getElementById("unionpay_payment_checkout").submit();</script>';
         $html.= '</body></html>';
-
 
         return $html;
     }
