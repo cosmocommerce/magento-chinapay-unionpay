@@ -511,7 +511,7 @@ class CosmoCommerce_Unionpay_Model_Payment extends Mage_Payment_Model_Method_Abs
 	*/
 	public function chinapaysn2magento($chinapaysn){
 		if($chinapaysn){ 
-			return substr($chinapaysn, 0, 4) . substr($chinapaysn, 9) ;
+			return substr($chinapaysn, 2, 2) . substr($chinapaysn, 9) ;
 		}
 	}
 

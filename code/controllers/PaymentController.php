@@ -96,12 +96,69 @@ class CosmoCommerce_Unionpay_PaymentController extends Mage_Core_Controller_Fron
         }
 		$unionpay = Mage::getModel('unionpay/payment');
 		
-		$partner=$unionpay->getConfigData('partner_id');
-		$security_code=$unionpay->getConfigData('security_code');
+		$pubKey=$unionpay->getConfigData('partner_id');
 		
+			
+		$merid=$postData['merid'];
+		$orderno=$postData['orderno'];
+		$amount=$postData['amount'];
+		$currencycode=$postData['currencycode'];
+		$transdate=$postData['transdate'];
+		$transtype=$postData['transtype'];
+		$status=$postData['status'];
+		$checkvalue=$postData['checkvalue'];
 		
+		$mer_id = $unionpay->buildKey($pubKey);
+		if(!$mer_id) { 
+			Mage::log('导入私钥文件失败！', null, 'unionpay_callback.log');
+			exit;
+		}
+		$flag=verifyTransResponse($merid,$orderno,$amount,$currencycode,$transdate,$transtype,$status,$checkvalue);
 		
-		Mage::log(($postData));
+		$real_ordid = $unionpay->chinapaysn2magento($orderno);
+		$order = Mage::getModel('sales/order');
+		$order->loadByIncrementId($real_ordid);
+		if(!$flag) {
+			Mage::log('验证签名失败！', null, 'unionpay_callback.log'); 
+			$order->addStatusToHistory(
+			$order->getStatus(),
+			Mage::helper('unionpay')->__('验证错误'));
+			try{
+				$order->save();
+			} catch(Exception $e){
+				
+			}
+		}else{
+			Mage::log('验证签名ok！', null, 'unionpay_callback.log'); 	if ($status == '1001'){
+			if ($status == '1001'){
+			
+				$order->setStatus(Mage_Sales_Model_Order::STATE_PROCESSING);
+				$order->addStatusToHistory(
+				$alipay->getConfigData('order_status_payment_accepted'),
+				Mage::helper('alipay')->__('付款成功'));
+				try{
+					$order->save();
+				} catch(Exception $e){
+					
+				}
+				
+				
+				
+			}else{
+			
+				$order->addStatusToHistory(
+				$order->getStatus(),
+				Mage::helper('unionpay')->__('付款失败'));
+				try{
+					$order->save();
+				} catch(Exception $e){
+					
+				}
+			}
+		}
+	
+	
+		
 		
     }
 
