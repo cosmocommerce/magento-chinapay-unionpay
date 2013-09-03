@@ -129,7 +129,7 @@ class CosmoCommerce_Unionpay_PaymentController extends Mage_Core_Controller_Fron
 				
 			}
 		}else{
-			Mage::log('验证签名ok！', null, 'unionpay_callback.log'); 	if ($status == '1001'){
+			Mage::log('验证签名ok！', null, 'unionpay_callback.log'); 
 			if ($status == '1001'){
 			
 				$order->setStatus(Mage_Sales_Model_Order::STATE_PROCESSING);
