@@ -56,9 +56,9 @@
                         </title>
                         
                         <partner_id translate="label comment">
-                            <label>Merchant ID</label>
+                            <label>Merchant Public Key Path</label>
 							  <comment>
-								<![CDATA[Please find the Partner ID at unionpay merchant center.<br /><span class="notice">This is a required field</span>]]>
+								<![CDATA[Please find the key at unionpay merchant center.<br />e.g. /var/data/key/MerPrK_***************_20130801093503.key <br /><span class="notice">This is a required field</span>]]>
 							  </comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>5</sort_order>
@@ -67,9 +67,9 @@
                             <show_in_store>0</show_in_store>
                         </partner_id>
                         <security_code translate="label comment">
-                            <label>Merchant Key Path</label>
+                            <label>Merchant Private Key Path</label>
 							  <comment>
-								<![CDATA[Please find the Security Code at unionpay merchant center.<br /><span class="notice">This is a required field</span>]]>
+								<![CDATA[Please find the key at unionpay merchant center.<br />e.g.  /var/data/key/PgPubk.key <br /><span class="notice">This is a required field</span>]]>
 							  </comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>6</sort_order>
