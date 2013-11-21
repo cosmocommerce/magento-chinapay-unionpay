@@ -115,7 +115,7 @@ class CosmoCommerce_Unionpay_PaymentController extends Mage_Core_Controller_Fron
 		}
 		$flag=$this->verifyTransResponse($merid,$orderno,$amount,$currencycode,$transdate,$transtype,$status,$checkvalue);
 		
-		$real_ordid = $unionpay->chinapaysn2magento($orderno);
+		$real_ordid = $this->chinapaysn2magento($orderno);
 		$order = Mage::getModel('sales/order');
 		$order->loadByIncrementId($real_ordid);
 		if($order->getId()) {
@@ -135,8 +135,8 @@ class CosmoCommerce_Unionpay_PaymentController extends Mage_Core_Controller_Fron
 			
 				$order->setStatus(Mage_Sales_Model_Order::STATE_PROCESSING);
 				$order->addStatusToHistory(
-				$alipay->getConfigData('order_status_payment_accepted'),
-				Mage::helper('alipay')->__('付款成功'));
+				$unionpay->getConfigData('order_status_payment_accepted'),
+				Mage::helper('unionpay')->__('付款成功'));
 				try{
 					$order->save();
 				} catch(Exception $e){
