@@ -108,7 +108,7 @@ class CosmoCommerce_Unionpay_PaymentController extends Mage_Core_Controller_Fron
 		$status=$postData['status'];
 		$checkvalue=$postData['checkvalue'];
 		
-		$mer_id = $unionpay->buildKey($pubKey);
+		$mer_id = $this->buildKey($pubKey);
 		if(!$mer_id) { 
 			Mage::log('导入私钥文件失败！', null, 'unionpay_callback.log');
 			exit;
