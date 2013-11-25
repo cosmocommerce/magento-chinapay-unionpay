@@ -28,6 +28,7 @@ class CosmoCommerce_Unionpay_PaymentController extends Mage_Core_Controller_Fron
     protected $_order;
 	protected $_gateway="https://payment.chinapay.com/pay/TransGet?";
 
+	protected $private_key = array();
     /**
      *  Get order
      *
@@ -85,20 +86,22 @@ class CosmoCommerce_Unionpay_PaymentController extends Mage_Core_Controller_Fron
             $method = 'post';
 
 
-        } else if ($this->getRequest()->isGet())
-        {
-            $postData = $this->getRequest()->getQuery();
-            $method = 'get';
 
-        } else
-        {
-            return;
+
+
+
+
+
+
+
         }
 		$unionpay = Mage::getModel('unionpay/payment');
 		
 		$pubKey=$unionpay->getConfigData('partner_id');
 		
-			
+
+        
+        Mage::log($postData, null, 'unionpay_callback.log'); 
 		$merid=$postData['merid'];
 		$orderno=$postData['orderno'];
 		$amount=$postData['amount'];
@@ -106,15 +109,17 @@ class CosmoCommerce_Unionpay_PaymentController extends Mage_Core_Controller_Fron
 		$transdate=$postData['transdate'];
 		$transtype=$postData['transtype'];
 		$status=$postData['status'];
+        Mage::log($status, null, 'unionpay_callback.log'); 
 		$checkvalue=$postData['checkvalue'];
 		
 		$mer_id = $this->buildKey($pubKey);
 		if(!$mer_id) { 
-			Mage::log('导入私钥文件失败！', null, 'unionpay_callback.log');
+			Mage::log('导入公钥文件失败！', null, 'unionpay_callback.log');
 			exit;
 		}
 		$flag=$this->verifyTransResponse($merid,$orderno,$amount,$currencycode,$transdate,$transtype,$status,$checkvalue);
-		
+
+	
 		$real_ordid = $this->chinapaysn2magento($orderno);
 		$order = Mage::getModel('sales/order');
 		$order->loadByIncrementId($real_ordid);
@@ -131,14 +136,17 @@ class CosmoCommerce_Unionpay_PaymentController extends Mage_Core_Controller_Fron
 			}
 		}else{
 			Mage::log('验证签名ok！', null, 'unionpay_callback.log'); 
+            
 			if ($status == '1001'){
 			
 				$order->setStatus(Mage_Sales_Model_Order::STATE_PROCESSING);
 				$order->addStatusToHistory(
-				$unionpay->getConfigData('order_status_payment_accepted'),
-				Mage::helper('unionpay')->__('付款成功'));
+					$unionpay->getConfigData('order_status_payment_accepted'),
+					Mage::helper('unionpay')->__('付款成功')
+				);
 				try{
 					$order->save();
+					$order->sendNewOrderEmail();
 				} catch(Exception $e){
 					
 				}
@@ -148,10 +156,11 @@ class CosmoCommerce_Unionpay_PaymentController extends Mage_Core_Controller_Fron
 			}else{
 			
 				$order->addStatusToHistory(
-				$order->getStatus(),
-				Mage::helper('unionpay')->__('付款失败'));
+					$order->getStatus(),
+					Mage::helper('unionpay')->__('付款失败')
+				);
 				try{
-					$order->save();
+					$order->save(); 
 				} catch(Exception $e){
 					
 				}
